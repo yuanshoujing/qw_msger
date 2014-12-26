@@ -1,5 +1,7 @@
 package com.qw.cordova.msg;
 
+import com.qw.cordova.msg.xg.XGProvider;
+
 /**
  * 消息提供者工厂
  *
@@ -13,7 +15,7 @@ public abstract class ProviderFactory {
         Provider result = null;
 
         if (VENDOR_XG.equals(vendor)) {
-            return ProviderXG.getInstance();
+            return XGProvider.getInstance();
         }
 
         return result;

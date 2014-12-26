@@ -1,23 +1,24 @@
-package com.qw.cordova.msg;
+package com.qw.cordova.msg.xg;
 
 import android.content.Context;
 
+import com.qw.cordova.msg.Provider;
 import com.tencent.android.tpush.XGPushManager;
 
 /**
  * @author: 袁首京<yuanshoujing@gmail.com>
  */
-public class ProviderXG implements Provider {
+public class XGProvider implements Provider {
 
-    private static ProviderXG instance;
+    private static XGProvider instance;
 
-    private ProviderXG() {
+    private XGProvider() {
 
     }
 
-    public static ProviderXG getInstance() {
+    public static XGProvider getInstance() {
         if (instance == null) {
-            instance = new ProviderXG();
+            instance = new XGProvider();
         }
 
         return instance;

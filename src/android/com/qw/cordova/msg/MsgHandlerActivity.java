@@ -19,7 +19,7 @@ public class MsgHandlerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean isMsgPluginActive = Messenger.isActive();
+        boolean isMsgPluginActive = QwMsger.isActive();
         processBundle(isMsgPluginActive);
 
         this.finish();
@@ -46,7 +46,7 @@ public class MsgHandlerActivity extends Activity {
             originalExtras.putBoolean("foreground", false);
             originalExtras.putBoolean("coldstart", !isMsgPluginActive);
 
-            Messenger.sendExtras(originalExtras);
+            QwMsger.sendExtras(originalExtras);
         }
     }
 

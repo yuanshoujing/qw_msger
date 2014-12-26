@@ -1,73 +1,102 @@
+var channel = require('cordova/channel');
+var exec = require('cordova/exec');
+var cordova = require('cordova');
+
+var emptyfunc = function (error) {
+    console.log("==> qw_msger: " + error);
+};
+
 var qw_msger = function() {
 };
 
 /**
  * 注册
  */
-qw_msger.prototype.register = function(successCallback, errorCallback, options) {
-    if (errorCallback == null) { errorCallback = function() {}}
+qw_msger.prototype.register = function(vendor, onSuccess, onError, account) {
+    if (onError == null) {
+        onError = emptyfunc;
+    }
 
-    if (typeof errorCallback != "function")  {
-        console.log("qw_msger.register failure: failure parameter not a function");
+    if (typeof onError != "function")  {
+        console.log("qw_msger.register failure: onError parameter not a function");
         return ;
     }
 
-    if (typeof successCallback != "function") {
-        console.log("qw_msger.register failure: success callback parameter must be a function");
+    if (typeof onSuccess != "function") {
+        console.log("qw_msger.register failure: onSuccess parameter not a function");
         return ;
     }
 
-    cordova.exec(successCallback, errorCallback, "Messenger", "register", [options]);
+    var options = {
+        "vendor": vendor,
+        "account": account
+    };
+
+    channel.onCordovaReady.subscribe(function () {
+        exec(onSuccess, onError, "qw_msger", "register", [options]);
+    });
 };
+
+/**
+ * 设置事件回调
+ */
+qw_msger.prototype.setEventCallback = function(callback) {
+    if (typeof callback != "function") {
+        console.log("qw_msger.setEventCallback failure: callback parameter not a function");
+        return ;
+    }
+
+    channel.onCordovaReady.subscribe(function () {
+        exec(callback, emptyfunc, "qw_msger", "setEventCallback", []);
+    });
+};
+
+
 
 /**
  * 注销
  */
-qw_msger.prototype.unRegister = function(successCallback, errorCallback, options) {
-    if (errorCallback == null) { errorCallback = function() {}}
+qw_msger.prototype.unRegister = function(onSuccess, onError) {
+    if (onError == null) {
+        onError = emptyfunc;
+    }
 
-    if (typeof errorCallback != "function")  {
-        console.log("qw_msger.unregister failure: failure parameter not a function");
+    if (typeof onError != "function")  {
+        console.log("qw_msger.unRegiste failure: onError parameter not a function");
         return ;
     }
 
-    if (typeof successCallback != "function") {
-        console.log("qw_msger.unregister failure: success callback parameter must be a function");
+    if (typeof onSuccess != "function") {
+        console.log("qw_msger.unRegister failure: onSuccess parameter not a function");
         return ;
     }
 
-     cordova.exec(successCallback, errorCallback, "Messenger", "unregister", [options]);
+    channel.onCordovaReady.subscribe(function () {
+        exec(onSuccess, onError, "qw_msger", "unRegister", []);
+    });
 };
 
 /**
  * 解除账户绑定
  */
-qw_msger.prototype.unBindAccount = function(successCallback, errorCallback, options) {
-    if (errorCallback == null) { errorCallback = function() {}}
+qw_msger.prototype.unBindAccount = function(onSuccess, onError) {
+    if (onError == null) {
+        onError = emptyfunc;
+    }
 
-    if (typeof errorCallback != "function")  {
-        console.log("qw_msger.unBindAccount failure: failure parameter not a function");
+    if (typeof onError != "function")  {
+        console.log("qw_msger.unBindAccount failure: onError parameter not a function");
         return ;
     }
 
-    if (typeof successCallback != "function") {
-        console.log("qw_msger.unBindAccount failure: success callback parameter must be a function");
+    if (typeof onSuccess != "function") {
+        console.log("qw_msger.unBindAccount failure: onSuccess parameter not a function");
         return ;
     }
 
-     cordova.exec(successCallback, errorCallback, "Messenger", "unBindAccount", [options]);
+    channel.onCordovaReady.subscribe(function () {
+        exec(onSuccess, onError, "qw_msger", "unBindAccount", []);
+    });
 };
 
-//-------------------------------------------------------------------
-
-if(!window.plugins) {
-    window.plugins = {};
-}
-
-if (!window.plugins.qw_msger) {
-    window.plugins.qw_msger = new qw_msger();
-}
-
-if (typeof module != 'undefined' && module.exports) {
-  module.exports = qw_msger;
-}
+module.exports = new qw_msger();

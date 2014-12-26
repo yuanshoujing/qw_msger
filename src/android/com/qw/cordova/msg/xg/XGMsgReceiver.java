@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.qw.cordova.msg.Messenger;
+import com.qw.cordova.msg.QwMsger;
 import com.qw.cordova.msg.MsgHandlerActivity;
 import com.tencent.android.tpush.XGPushBaseReceiver;
 import com.tencent.android.tpush.XGPushClickedResult;
@@ -25,10 +25,8 @@ import org.json.JSONObject;
  *
  * @author: 袁首京<yuanshoujing@gmail.com>
  */
-public class MsgReceiver extends XGPushBaseReceiver {
+public class XGMsgReceiver extends XGPushBaseReceiver {
     private static final String TAG = "XGMsgReceiver";
-
-    private Intent intent = new Intent("com.qq.xgdemo.activity.UPDATE_LISTVIEW");
 
     /**
      * 展示消息到通知栏
@@ -73,7 +71,7 @@ public class MsgReceiver extends XGPushBaseReceiver {
             jsonObject.put("event", "register");
             jsonObject.put("registerResult", text);
 
-            Messenger.sendJavascript(jsonObject);
+            QwMsger.sendJavascript(jsonObject);
         }
         catch (JSONException e) {
             Log.e(TAG, e.getMessage());
@@ -146,16 +144,21 @@ public class MsgReceiver extends XGPushBaseReceiver {
 
         String text = "收到消息:" + message.toString();
         Log.d(TAG, text);
+        
+        String title = context.getApplicationInfo().loadLabel(context.getPackageManager()).toString();
+        if (message.getTitle() != null && !"".equals(message.getTitle().trim())) {
+            title = message.getTitle();
+        }
 
         Bundle bundle = new Bundle();
-        bundle.putString("title", message.getTitle());
+        bundle.putString("title", title);
         bundle.putString("message", message.getContent());
         bundle.putInt("msgcnt", 1);
         bundle.putInt("msgId", 0);
 
-        if (Messenger.isInForeground()) {
+        if (QwMsger.isInForeground()) {
             bundle.putBoolean("foreground", true);
-            Messenger.sendExtras(bundle);
+            QwMsger.sendExtras(bundle);
         }
         else {
             bundle.putBoolean("foreground", false);

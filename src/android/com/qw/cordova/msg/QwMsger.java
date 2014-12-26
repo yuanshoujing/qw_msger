@@ -9,6 +9,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,29 +21,30 @@ import java.util.Iterator;
  *
  * @author: 袁首京<yuanshoujing@gmail.com>
  */
-public class Messenger extends CordovaPlugin {
-    public static final String TAG = "MessengerPlugin";
+public class QwMsger extends CordovaPlugin {
+    public static final String TAG = "QwMsger";
 
     public static final String REGISTER = "register";
-    public static final String UNREGISTER = "unregister";
+    public static final String UNREGISTER = "unRegister";
     public static final String UNBINDACCOUNT = "unBindAccount";
+    public static final String SETEVENTCALLBACK = "setEventCallback";
     public static final String EXIT = "exit";
 
     private static CordovaWebView cordovaWebView;
     private static boolean isForeground;
-    private static String eventCallBack;
     private static String account;
     private static Bundle cachedBundle;
     private static String vendor;
 
     private static Provider provider;
+    private static CallbackContext savedCallbackContext;
 
     private Context getApplicationContext() {
         return this.cordova.getActivity().getApplicationContext();
     }
 
     @Override
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
+    public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
         boolean result = false;
 
         Log.v(TAG, "==> 执行的 action：" + action);
@@ -54,9 +56,6 @@ public class Messenger extends CordovaPlugin {
             try {
                 jsonObject = args.getJSONObject(0);
                 Log.v(TAG, "==> 传入的参数：" + jsonObject.toString());
-
-                eventCallBack = (String) jsonObject.get("eventCallBack");
-                Log.v(TAG, "==> 事件回调：" + eventCallBack);
 
                 account = (String) jsonObject.get("account");
                 Log.v(TAG, "==> 目标用户：" + account);
@@ -109,6 +108,16 @@ public class Messenger extends CordovaPlugin {
                 callbackContext.success();
             }
         }
+        else if (SETEVENTCALLBACK.equals(action)) {
+            if (provider == null) {
+                result = false;
+                callbackContext.error("尚未正确注册");
+            }
+            else {
+                savedCallbackContext = callbackContext;
+                result = true;
+            }
+        }
         else {
             result = false;
             Log.e(TAG, "==> 无效的 action : " + action);
@@ -122,12 +131,26 @@ public class Messenger extends CordovaPlugin {
      * Sends a json object to the client as parameter to a method which is defined in gECB.
 	 */
     public static void sendJavascript(JSONObject _json) {
-        String _d = "javascript:" + eventCallBack + "(" + _json.toString() + ")";
-        Log.v(TAG, "sendJavascript: " + _d);
-
-        if (eventCallBack != null && cordovaWebView != null) {
-            cordovaWebView.sendJavascript(_d);
+        if (_json == null) {
+            return;
         }
+//        String _d = "javascript:" + pendingCallback + "(" + _json.toString() + ")";
+        Log.v(TAG, "sendJavascript: " + _json.toString());
+
+//        if (pendingCallback != null && cordovaWebView != null) {
+//            cordovaWebView.sendJavascript(_d);
+//        }
+        sendMessage(_json);
+    }
+
+    public static void sendMessage(JSONObject jsonObject) {
+        if (savedCallbackContext == null) {
+            return;
+        }
+        
+        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+        pluginResult.setKeepCallback(true);
+        savedCallbackContext.sendPluginResult(pluginResult);
     }
 
     /*
@@ -136,7 +159,7 @@ public class Messenger extends CordovaPlugin {
      */
     public static void sendExtras(Bundle extras) {
         if (extras != null) {
-            if (eventCallBack != null && cordovaWebView != null) {
+            if (cordovaWebView != null) {
                 sendJavascript(convertBundleToJson(extras));
             }
             else {
@@ -171,12 +194,12 @@ public class Messenger extends CordovaPlugin {
     public void onDestroy() {
         super.onDestroy();
         isForeground = false;
-        eventCallBack = null;
         cordovaWebView = null;
         account = null;
         cachedBundle = null;
         vendor = null;
         provider = null;
+        savedCallbackContext = null;
     }
 
     /*

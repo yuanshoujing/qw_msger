@@ -5,14 +5,15 @@
     version="0.1">
 
     <name>qw_msger</name>
+    <description>cordova message plugin</description>
     <author email="yuanshoujing@gmail.com">袁首京</author>
-
-    <description>此插件用于在移动设备上实现消息推送。目前仅支持使用腾讯信鸽向 Android 设备推送。</description>
-
     <license>MIT</license>
+    <keywords>cordova, message</keywords>
+    <repo>https://github.com/yuanshoujing/qw_msger.git</repo>
 
     <js-module src="www/qw_msger.js" name="qw_msger">
         <clobbers target="qw_msger" />
+        <runs />
     </js-module>
 
     <engines>
@@ -23,12 +24,11 @@
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="qw_msger" >
-                <param name="android-package" value="com.qw.cordova.msg"/>
+                <param name="android-package" value="com.qw.cordova.msg.QwMsger"/>
             </feature>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
-            <!-- 腾讯信鸽所需权限 -->
             <uses-permission android:name="android.permission.INTERNET"/>
             <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
             <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
@@ -47,13 +47,10 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:name="com.qw.cordova.msg.xg.MsgReceiver" android:process=":xg_service_v2">
-                <intent-filter android:priority="0x7fffffff">
-                    <action android:name="com.tencent.android.tpush.action.SDK" />
-                    <action android:name="com.tencent.android.tpush.action.INTERNAL_PUSH_MESSAGE" />
-                    <action android:name="android.intent.action.USER_PRESENT" />
-                    <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                    <category android:name="$PACKAGE_NAME" />
+            <receiver android:name="com.qw.cordova.msg.xg.XGMsgReceiver" android:process=":xg_service_v2">
+                <intent-filter>
+                    <action android:name="com.tencent.android.tpush.action.PUSH_MESSAGE" />
+                    <action android:name="com.tencent.android.tpush.action.FEEDBACK" />
                 </intent-filter>
             </receiver>
 
@@ -102,7 +99,7 @@
         <source-file src="src/android/libs/x86/libtpnsWatchdog.so" target-dir="libs/x86/" />
 
         <source-file 
-            src="src/android/com/qw/cordova/msg/Messenger.java"
+            src="src/android/com/qw/cordova/msg/QwMsger.java"
             target-dir="src/com/qw/cordova/msg/"
             />
         <source-file 
@@ -118,11 +115,11 @@
             target-dir="src/com/qw/cordova/msg/"
             />
         <source-file 
-            src="src/android/com/qw/cordova/msg/ProviderXG.java"
-            target-dir="src/com/qw/cordova/msg/"
+            src="src/android/com/qw/cordova/msg/xg/XGProvider.java"
+            target-dir="src/com/qw/cordova/msg/xg/"
             />
         <source-file 
-            src="src/android/com/qw/cordova/msg/xg/MsgReceiver.java"
+            src="src/android/com/qw/cordova/msg/xg/XGMsgReceiver.java"
             target-dir="src/com/qw/cordova/msg/xg/"
             />
     </platform>
