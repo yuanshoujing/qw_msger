@@ -73,12 +73,12 @@
                 </intent-filter>
             </service>
 
-            <meta-data
+            <!--meta-data
                 android:name="XG_V2_ACCESS_ID"
                 android:value="your_access_id" />
             <meta-data
                 android:name="XG_V2_ACCESS_KEY"
-                android:value="your_access_key" />
+                android:value="your_access_key" /-->
         </config-file>
 
         <source-file src="src/android/libs/android-support-v4.jar" target-dir="libs/" />

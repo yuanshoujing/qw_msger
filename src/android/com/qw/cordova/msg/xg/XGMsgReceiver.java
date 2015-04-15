@@ -1,5 +1,8 @@
 package com.qw.cordova.msg.xg;
 
+import java.io.Serializable;
+import java.util.Random;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -41,13 +44,13 @@ public class XGMsgReceiver extends XGPushBaseReceiver {
             return;
         }
 
-        Bundle bundle = new Bundle();
-        bundle.putString("title", notifiShowedRlt.getTitle());
-        bundle.putString("message", notifiShowedRlt.getContent());
-        bundle.putInt("msgcnt", 1);
-        bundle.putLong("msgId", notifiShowedRlt.getMsgId());
-
-        this.createNotification(context, bundle);
+//        Bundle bundle = new Bundle();
+//        bundle.putString("title", notifiShowedRlt.getTitle());
+//        bundle.putString("message", notifiShowedRlt.getContent());
+//        bundle.putInt("msgcnt", 1);
+//        bundle.putLong("msgId", notifiShowedRlt.getMsgId());
+//
+//        this.createNotification(context, bundle);
     }
 
     @Override
@@ -154,7 +157,7 @@ public class XGMsgReceiver extends XGPushBaseReceiver {
         bundle.putString("title", title);
         bundle.putString("message", message.getContent());
         bundle.putInt("msgcnt", 1);
-        bundle.putInt("msgId", 0);
+        bundle.putInt("msgId", new Random().nextInt());
 
         if (QwMsger.isInForeground()) {
             bundle.putBoolean("foreground", true);
@@ -210,24 +213,11 @@ public class XGMsgReceiver extends XGPushBaseReceiver {
         else {
             mBuilder.setContentText("<missing message content>");
         }
-
-        String msgcnt = extras.getString("msgcnt");
-        if (msgcnt != null) {
-            mBuilder.setNumber(Integer.parseInt(msgcnt));
-        }
-
-        int msgId = 0;
-
-        try {
-            msgId = Integer.parseInt(extras.getString("msgId"));
-        }
-        catch (NumberFormatException e) {
-            Log.e(TAG, "Number format exception - Error parsing Notification ID: " + e.getMessage());
-        }
-        catch (Exception e) {
-            Log.e(TAG, "Number format exception - Error parsing Notification ID" + e.getMessage());
-        }
-
+        
+        Integer msgcnt = extras.getInt("msgcnt");
+        mBuilder.setNumber(msgcnt);
+        
+        Integer msgId = extras.getInt("msgId");
         mNotificationManager.notify(appName, msgId, mBuilder.build());
     }
 

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    id="com.qw.cordova.msg"
+    version="0.0.1">
+    <name>QwMsger</name>
+    <description>Cordova QwMsger Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,qw_msger</keywords>
+
+    <js-module src="www/qw_msger.js" name="qw_msger">
+        <clobbers target="qw_msger" />
+    </js-module>
+
+    <!-- ios -->
+    <platform name="ios">    
+        <config-file target="config.xml" parent="/*">
+            <feature name="QwMsger">
+                <param name="ios-package" value="QWMsger" /> 
+            </feature>
+        </config-file>
+        <header-file src="src/ios/libs/XGPush.h" />
+        <header-file src="src/ios/QWMsger.h" />
+        <header-file src="src/ios/AppDelegate+push.h" />
+	    <source-file src="src/ios/QWMsger.m" />
+	    <source-file src="src/ios/AppDelegate+push.m" />
+        <source-file src="src/ios/libs/libXG-SDK.a" framework="true" />
+        <framework src="CFNetwork.framework"  framework="true"/>
+        <framework src="SystemConfiguration.framework"  framework="true"/>
+        <framework src="CoreTelephony.framework"  framework="true"/>
+        <framework src="libz.dylib"  framework="true"/>
+        <framework src="libsqlite3.dylib"  framework="true"/>
+    </platform>
+
+</plugin>
